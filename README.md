@@ -9,7 +9,7 @@ Prepared by Aman Reddy · Data Analyst
 
 ## Live Dashboards
 
-[Light Version](https://amanreddy249.github.io/Win-loss-Analysis---Bhanzu/consolidated_win_loss_analysis.html) &nbsp;|&nbsp; [Dark Version](https://amanreddy249.github.io/Win-loss-Analysis---Bhanzu/sales_call_analysis.html)
+[Light Version](https://amanreddy249.github.io/Win-loss-Analysis---Bhanzu/consolidated_win_loss_analysis.html) &nbsp;|&nbsp; 
 
 ---
 
@@ -73,13 +73,7 @@ The interactive dashboards cover six behavioral dimensions — opening and rappo
 
 ---
 
-## Built With
 
-![HTML](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
-![CSS](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
-![Chart.js](https://img.shields.io/badge/Chart.js-FF6384?style=flat-square&logo=chartdotjs&logoColor=white)
-![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-222222?style=flat-square&logo=githubpages&logoColor=white)
 
 ---
 
