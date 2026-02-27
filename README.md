@@ -1,2 +1,2 @@
 ## 📊 Sales Call Analysis
-[View Interactive Analysis →](https://YOUR-USERNAME.github.io/YOUR-USERNAME/consolidated_win_loss_analysis.html)
+[View Interactive Analysis →](https://amanreddy249.github.io/amanreddy249/consolidated_win_loss_analysis.html)
