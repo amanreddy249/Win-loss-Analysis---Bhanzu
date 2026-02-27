@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consolidated Win vs Loss Analysis</title>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --win: #0D7C4C;
+    --win-light: #E6F4EE;
+    --win-mid: #1AAD6A;
+    --win-border: #A8DCC3;
+    --loss: #C0293F;
+    --loss-light: #FDEAED;
+    --loss-mid: #E04060;
+    --loss-border: #F0AABB;
+    --accent: #1A6FBF;
+    --accent-light: #E8F1FB;
+    --yellow: #B07B00;
+    --yellow-light: #FFF7E0;
+    --bg: #F5F6F8;
+    --surface: #FFFFFF;
+    --surface2: #F0F2F5;
+    --border: #E2E6EC;
+    --text: #0F1826;
+    --text2: #3A4560;
+    --muted: #7A869A;
+    --shadow: 0 2px 12px rgba(15,24,38,0.07);
+    --shadow-lg: 0 8px 32px rgba(15,24,38,0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Public Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Top banner */
+  .top-banner {
+    background: var(--text);
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .top-banner span { color: var(--win-mid); }
+
+  .container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 56px 0 36px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 40px;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--win);
+    margin-bottom: 18px;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    width: 24px; height: 2px;
+    background: var(--win);
+    border-radius: 2px;
+  }
+
+  .hero h1 {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.08;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--win);
+  }
+
+  .hero-sub {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.75;
+    max-width: 520px;
+    font-weight: 400;
+  }
+
+  .hero-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-end;
+  }
+
+  .hero-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 10px 18px;
+    box-shadow: var(--shadow);
+    white-space: nowrap;
+  }
+
+  .hero-pill-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .hero-pill-val {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-pill-lbl {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  /* STAT CARDS */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 52px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 22px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+
+  .stat-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
+
+  .stat-card-accent {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .sc-win .stat-card-accent { background: var(--win-mid); }
+  .sc-loss .stat-card-accent { background: var(--loss-mid); }
+  .sc-blue .stat-card-accent { background: var(--accent); }
+  .sc-yellow .stat-card-accent { background: #E8A000; }
+
+  .stat-icon { font-size: 22px; margin-bottom: 14px; }
+
+  .stat-val {
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .sc-win .stat-val { color: var(--win); }
+  .sc-loss .stat-val { color: var(--loss); }
+  .sc-blue .stat-val { color: var(--accent); }
+  .sc-yellow .stat-val { color: var(--yellow); }
+
+  .stat-lbl {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .stat-sub { font-size: 12px; color: var(--muted); }
+
+  /* SECTION */
+  .section { margin-bottom: 60px; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-badge {
+    background: var(--text);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 6px;
+  }
+
+  .section-title {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.015em;
+    color: var(--text);
+  }
+
+  .section-desc {
+    font-size: 13px;
+    color: var(--muted);
+    margin-left: auto;
+    font-weight: 500;
+  }
+
+  /* COMPARISON TABLE */
+  .comp-table {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  .comp-table-head {
+    display: grid;
+    grid-template-columns: 220px 1fr 1fr 110px;
+    gap: 0;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .comp-th {
+    padding: 12px 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+
+  .comp-th.win-th { color: var(--win); }
+  .comp-th.loss-th { color: var(--loss); }
+
+  .comp-row {
+    display: grid;
+    grid-template-columns: 220px 1fr 1fr 110px;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  .comp-row:last-child { border-bottom: none; }
+  .comp-row:hover { background: var(--bg); }
+
+  .comp-cell {
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    border-right: 1px solid var(--border);
+  }
+
+  .comp-cell:last-child { border-right: none; }
+
+  .comp-metric { font-weight: 600; color: var(--text2); }
+
+  .comp-win-val {
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--win);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .comp-loss-val {
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--loss);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .comp-bar-wrap { display: flex; flex-direction: column; gap: 5px; width: 100%; }
+
+  .mini-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .mini-track {
+    flex: 1;
+    height: 6px;
+    background: var(--surface2);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+
+  .mini-fill {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 1s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .win-fill { background: var(--win-mid); }
+  .loss-fill { background: var(--loss-mid); }
+
+  .gap-chip {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 9px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  .gap-pos { background: var(--win-light); color: var(--win); }
+  .gap-neg { background: var(--loss-light); color: var(--loss); }
+
+  /* 2-col sub sections */
+  .sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+
+  .sub-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+  }
+
+  .sub-card-title {
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sub-card-title.win-title { color: var(--win); }
+  .sub-card-title.loss-title { color: var(--loss); }
+
+  .bullet-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    font-size: 13px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+  }
+
+  .bullet-item:last-child { border-bottom: none; }
+
+  .bullet-dot {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px;
+    font-weight: 900;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .win-dot { background: var(--win-light); color: var(--win); }
+  .loss-dot { background: var(--loss-light); color: var(--loss); }
+
+  /* CHARTS */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: var(--shadow);
+  }
+
+  .chart-label {
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .chart-headline {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  .chart-wrap { position: relative; height: 240px; }
+
+  /* IMPACT MODEL */
+  .impact-section {
+    background: var(--text);
+    border-radius: 20px;
+    padding: 48px 44px;
+    margin-bottom: 24px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .impact-section::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(26,173,106,0.15), transparent 70%);
+    pointer-events: none;
+  }
+
+  .impact-section::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -60px;
+    width: 240px; height: 240px;
+    background: radial-gradient(circle, rgba(26,111,191,0.12), transparent 70%);
+    pointer-events: none;
+  }
+
+  .impact-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--win-mid);
+    margin-bottom: 16px;
+    position: relative; z-index: 1;
+  }
+
+  .impact-headline {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin-bottom: 40px;
+    position: relative; z-index: 1;
+  }
+
+  .impact-headline span { color: var(--win-mid); }
+
+  .impact-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    position: relative; z-index: 1;
+  }
+
+  .impact-col {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 24px;
+  }
+
+  .impact-area {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 10px;
+  }
+
+  .impact-range {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--win-mid);
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  .impact-desc {
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.6;
+  }
+
+  .impact-from {
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  .impact-total {
+    margin-top: 36px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative; z-index: 1;
+  }
+
+  .impact-total-label {
+    font-size: 14px;
+    color: rgba(255,255,255,0.55);
+    max-width: 400px;
+    line-height: 1.6;
+  }
+
+  .impact-total-num {
+    font-size: 52px;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  .impact-total-num span { color: var(--win-mid); }
+
+  /* TALK RATIO VISUAL */
+  .talk-visual {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+
+  .talk-row {
+    margin-bottom: 24px;
+  }
+
+  .talk-row:last-child { margin-bottom: 0; }
+
+  .talk-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .talk-title { font-size: 13px; font-weight: 700; color: var(--text); }
+  .talk-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .talk-badge.win-b { background: var(--win-light); color: var(--win); }
+  .talk-badge.loss-b { background: var(--loss-light); color: var(--loss); }
+
+  .talk-track {
+    height: 32px;
+    background: var(--surface2);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+  }
+
+  .talk-seg {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* CLIENT MESSAGE SECTION */
+  .message-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .message-card {
+    border-radius: 14px;
+    padding: 28px;
+    border: 1px solid;
+  }
+
+  .message-card.win-mc {
+    background: var(--win-light);
+    border-color: var(--win-border);
+  }
+
+  .message-card.loss-mc {
+    background: var(--loss-light);
+    border-color: var(--loss-border);
+  }
+
+  .mc-head {
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 18px;
+  }
+
+  .win-mc .mc-head { color: var(--win); }
+  .loss-mc .mc-head { color: var(--loss); }
+
+  .mc-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    font-size: 13px;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    color: var(--text2);
+  }
+
+  .mc-item:last-child { border-bottom: none; }
+
+  .mc-check { font-size: 14px; }
+
+  /* FINAL STATEMENT */
+  .final-statement {
+    background: linear-gradient(135deg, var(--win-light), var(--accent-light));
+    border: 1px solid var(--win-border);
+    border-radius: 20px;
+    padding: 48px;
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  .fs-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--win);
+    margin-bottom: 16px;
+  }
+
+  .fs-title {
+    font-size: clamp(24px, 4vw, 38px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+
+  .fs-sub {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 580px;
+    margin: 0 auto 32px;
+    line-height: 1.7;
+  }
+
+  .fs-chips {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .fs-chip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text2);
+    box-shadow: var(--shadow);
+  }
+
+  .fs-chip.win-chip { background: var(--win); color: #fff; border-color: var(--win); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-up {
+    opacity: 0;
+    animation: fadeUp 0.55s ease forwards;
+  }
+
+  .delay-1 { animation-delay: 0.08s; }
+  .delay-2 { animation-delay: 0.16s; }
+  .delay-3 { animation-delay: 0.24s; }
+  .delay-4 { animation-delay: 0.32s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-stats { align-items: flex-start; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .charts-grid { grid-template-columns: 1fr; }
+    .sub-grid { grid-template-columns: 1fr; }
+    .message-grid { grid-template-columns: 1fr; }
+    .impact-cols { grid-template-columns: 1fr; }
+    .impact-total { flex-direction: column; gap: 16px; }
+    .comp-table-head, .comp-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-banner">Consolidated Win vs Loss Analysis &nbsp;·&nbsp; <span>636 Calls</span> &nbsp;·&nbsp; Client-Ready &nbsp;·&nbsp; Impact-Focused &nbsp;·&nbsp; Quantified</div>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div>
+      <div class="hero-eyebrow">Sales Intelligence · 2024 Call Analysis</div>
+      <h1>What Separates<br><em>Wins</em> from Losses</h1>
+      <p class="hero-sub">A structured, quantified behavioral analysis of 636 sales calls — isolating the exact conversation patterns that drive conversion, and those that kill it.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-pill">
+        <div class="hero-pill-dot" style="background:var(--win-mid)"></div>
+        <div class="hero-pill-val" style="color:var(--win)">53</div>
+        <div class="hero-pill-lbl">Win Calls</div>
+      </div>
+      <div class="hero-pill">
+        <div class="hero-pill-dot" style="background:var(--loss-mid)"></div>
+        <div class="hero-pill-val" style="color:var(--loss)">583</div>
+        <div class="hero-pill-lbl">Loss Calls</div>
+      </div>
+      <div class="hero-pill">
+        <div class="hero-pill-dot" style="background:var(--accent)"></div>
+        <div class="hero-pill-val" style="color:var(--accent)">636</div>
+        <div class="hero-pill-lbl">Total Analyzed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAT CARDS -->
+  <div class="stats-row">
+    <div class="stat-card sc-win fade-up delay-1">
+      <div class="stat-card-accent"></div>
+      <div class="stat-icon">🏆</div>
+      <div class="stat-lbl">Discovery Advantage</div>
+      <div class="stat-val">+62%</div>
+      <div class="stat-sub">Winners ask 4.2 vs 1.6 questions</div>
+    </div>
+    <div class="stat-card sc-loss fade-up delay-2">
+      <div class="stat-card-accent"></div>
+      <div class="stat-icon">🚨</div>
+      <div class="stat-lbl">Objection Resolution Gap</div>
+      <div class="stat-val">−45%</div>
+      <div class="stat-sub">74% resolved vs only 29%</div>
+    </div>
+    <div class="stat-card sc-blue fade-up delay-3">
+      <div class="stat-card-accent"></div>
+      <div class="stat-icon">🎯</div>
+      <div class="stat-lbl">Closing Control Gap</div>
+      <div class="stat-val">−45%</div>
+      <div class="stat-sub">88% clear ask vs only 43%</div>
+    </div>
+    <div class="stat-card sc-yellow fade-up delay-4">
+      <div class="stat-card-accent"></div>
+      <div class="stat-icon">📈</div>
+      <div class="stat-lbl">Revenue Uplift Potential</div>
+      <div class="stat-val">+25%</div>
+      <div class="stat-sub">Without changing leads or product</div>
+    </div>
+  </div>
+
+  <!-- SECTION A: OPENING & RAPPORT -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-badge">A</span>
+      <h2 class="section-title">Opening & Rapport</h2>
+      <span class="section-desc">First impression patterns</span>
+    </div>
+
+    <div class="comp-table">
+      <div class="comp-table-head">
+        <div class="comp-th">Metric</div>
+        <div class="comp-th win-th">↑ Win Calls</div>
+        <div class="comp-th loss-th">↓ Loss Calls</div>
+        <div class="comp-th">Gap</div>
+      </div>
+      <div class="comp-row" id="row-a1">
+        <div class="comp-cell comp-metric">Demo-based contextual opening</div>
+        <div class="comp-cell">
+          <div class="comp-bar-wrap">
+            <div class="mini-bar-row"><div class="mini-track"><div class="mini-fill win-fill" style="width:0%" data-w="89"></div></div><span class="comp-win-val">89%</span></div>
+            <div class="mini-bar-row"><div class="mini-track"><div class="mini-fill loss-fill" style="width:0%" data-w="42"></div></div><span class="comp-loss-val">42%</span></div>
+          </div>
+        </div>
+        <div class="comp-cell" style="font-size:13px; color:var(--muted)">Winners built context before selling. Losers rushed into product.</div>
+        <div class="comp-cell"><span class="gap-chip gap-pos">+47%</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell comp-metric">Personalized greeting by name</div>
+        <div class="comp-cell">
+          <div class="comp-bar-wrap">
+            <div class="mini-bar-row"><div class="mini-track"><div class="mini-fill win-fill" style="width:0%" data-w="94"></div></div><span class="comp-win-val">94%</span></div>
+            <div class="mini-bar-row"><div class="mini-track"><div class="mini-fill loss-fill" style="width:0%" data-w="61"></div></div><span class="comp-loss-val">61%</span></div>
+          </div>
+        </div>
+        <div class="comp-cell" style="font-size:13px; color:var(--muted)">High in both, but winners were nearly universal.</div>
+        <div class="comp-cell"><span class="gap-chip gap-pos">+33%</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell comp-metric">Pricing in first 3 mins (Bad)</div>
+        <div class="comp-cell">
+          <div class="comp-bar-wrap">
+            <div class="mini-bar-row"><div class="mini-track"><div class="mini-fill win-fill" style="width:0%" data-w="6"></div></div><span class="comp-win-val">6%</span></div>
+            <div class="mini-bar-row"><div class="mini-track"><div class="mini-fill loss-fill" style="width:0%" data-w="39"></div></div><span class="comp-loss-val">39%</span></div>
+          </div>
+        </div>
+        <div class="comp-cell" style="font-size:13px; color:var(--muted)">Early price discussion raised loss probability by ~31%.</div>
+        <div class="comp-cell"><span class="gap-chip gap-neg">−33%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION B: DISCOVERY DEPTH -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-badge">B</span>
+      <h2 class="section-title">Discovery Depth — <span style="color:var(--win)">#1 Predictor of Conversion</span></h2>
+      <span class="section-desc">Biggest differentiator</span>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-label">Discovery Questions</div>
+        <div class="chart-headline">Winners ask 2.6× more questions</div>
+        <div class="chart-wrap">
+          <canvas id="discoveryChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-label">Discovery Coverage</div>
+        <div class="chart-headline">Question type adoption rates</div>
+        <div class="chart-wrap">
+          <canvas id="discoveryRadar"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="comp-table">
+      <div class="comp-table-head">
+        <div class="comp-th">Discovery Metric</div>
+        <div class="comp-th win-th">↑ Win</div>
+        <div class="comp-th loss-th">↓ Loss</div>
+        <div class="comp-th">Gap</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell comp-metric">Avg discovery questions per call</div>
+        <div class="comp-cell"><div class="comp-bar-wrap"><div class="mini-bar-row"><div class="mini-track"><div class="mini-fill win-fill" style="width:0%" data-w="84"></div></div><span class="comp-win-val">4.2</span></div><div class="mini-bar-row"><div class="mini-track"><div class="mini-fill loss-fill" style="width:0%" data-w="32"></div></div><span class="comp-loss-val">1.6</span></div></div></div>
+        <div class="comp-cell" style="font-size:13px; color:var(--muted)">Structured need exploration vs. assumption selling</div>
+        <div class="comp-cell"><span class="gap-chip gap-pos">+62%</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell comp-metric">Asked parent expectation question</div>
+        <div class="comp-cell"><div class="comp-bar-wrap"><div class="mini-bar-row"><div class="mini-track"><div class="mini-fill win-fill" style="width:0%" data-w="83"></div></div><span class="comp-win-val">83%</span></div><div class="mini-bar-row"><div class="mini-track"><div class="mini-fill loss-fill" style="width:0%" data-w="51"></div></div><span class="comp-loss-val">51%</span></div></div></div>
+        <div class="comp-cell" style="font-size:13px; color:var(--muted)">Understanding the real goal before pitching</div>
+        <div class="comp-cell"><span class="gap-chip gap-pos">+32%</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell comp-metric">Multi-layer discovery (3+ Qs)</div>
+        <div class="comp-cell"><div class="comp-bar-wrap"><div class="mini-bar-row"><div class="mini-track"><div class="mini-fill win-fill" style="width:0%" data-w="72"></div></div><span class="comp-win-val">72%</span></div><div class="mini-bar-row"><div class="mini-track"><div class="mini-fill loss-fill" style="width:0%" data-w="28"></div></div><span class="comp-loss-val">28%</span></div></div></div>
+        <div class="comp-cell" style="font-size:13px; color:var(--muted)">Layered questions = layered trust</div>
+        <div class="comp-cell"><span class="gap-chip gap-pos">+44%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION C: VALUE PROPOSITION -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-badge">C</span>
+      <h2 class="section-title">Value Proposition Delivery</h2>
+      <span class="section-desc">How value was communicated</span>
+    </div>
+
+    <div class="sub-grid">
+      <div class="sub-card">
+        <div class="sub-card-title win-title">✅ What Winners Did</div>
+        <div class="bullet-item"><div class="bullet-dot win-dot">✓</div>Linked value directly to the parent's own words (78%)</div>
+        <div class="bullet-item"><div class="bullet-dot win-dot">✓</div>Outcome-based positioning — confidence, grade improvement (86%)</div>
+        <div class="bullet-item"><div class="bullet-dot win-dot">✓</div>Rarely used generic scripts — only 9% of win calls</div>
+        <div class="bullet-item"><div class="bullet-dot win-dot">✓</div>Translated features into child-specific outcomes</div>
+      </div>
+      <div class="sub-card">
+        <div class="sub-card-title loss-title">❌ What Losers Did</div>
+        <div class="bullet-item"><div class="bullet-dot loss-dot">✗</div>Generic pitch delivery — present in 44% of loss calls</div>
+        <div class="bullet-item"><div class="bullet-dot loss-dot">✗</div>Feature dumping — described program structure (39%)</div>
+        <div class="bullet-item"><div class="bullet-dot loss-dot">✗</div>No personalization linkage to parent's stated need (52%)</div>
+        <div class="bullet-item"><div class="bullet-dot loss-dot">✗</div>Pitch felt scripted and detached from the conversation</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION D: OBJECTION HANDLING -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-badge">D</span>
+      <h2 class="section-title">Objection Handling — <span style="color:var(--loss)">Major Revenue Leak</span></h2>
+      <span class="section-desc">Where 63% of losses collapsed</span>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-label">Objection Resolution</div>
+        <div class="chart-headline">Win calls resolve 45% more objections</div>
+        <div class="chart-wrap">
+          <canvas id="objectionChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-label">Objection Breakdown</div>
+        <div class="chart-headline">How each type was handled in losses</div>
+        <div class="chart-wrap">
+          <canvas id="objectionBreakdown"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION E: CLOSING -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-badge">E</span>
+      <h2 class="section-title">Closing & Next Step Control</h2>
+      <span class="section-desc">How calls ended</span>
+    </div>
+
+    <div class="comp-table">
+      <div class="comp-table-head">
+        <div class="comp-th">Closing Metric</div>
+        <div class="comp-th win-th">↑ Win</div>
+        <div class="comp-th loss-th">↓ Loss</div>
+        <div class="comp-th">Gap</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell comp-metric">Clear next-step ask made</div>
+        <div class="comp-cell"><div class="comp-bar-wrap"><div class="mini-bar-row"><div class="mini-track"><div class="mini-fill win-fill" style="width:0%" data-w="88"></div></div><span class="comp-win-val">88%</span></div><div class="mini-bar-row"><div class="mini-track"><div class="mini-fill loss-fill" style="width:0%" data-w="43"></div></div><span class="comp-loss-val">43%</span></div></div></div>
+        <div class="comp-cell" style="font-size:13px; color:var(--muted)">Ambiguity at close = silent revenue loss</div>
+        <div class="comp-cell"><span class="gap-chip gap-pos">+45%</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell comp-metric">Summary before close</div>
+        <div class="comp-cell"><div class="comp-bar-wrap"><div class="mini-bar-row"><div class="mini-track"><div class="mini-fill win-fill" style="width:0%" data-w="71"></div></div><span class="comp-win-val">71%</span></div><div class="mini-bar-row"><div class="mini-track"><div class="mini-fill loss-fill" style="width:0%" data-w="38"></div></div><span class="comp-loss-val">38%</span></div></div></div>
+        <div class="comp-cell" style="font-size:13px; color:var(--muted)">Restating value anchors the decision</div>
+        <div class="comp-cell"><span class="gap-chip gap-pos">+33%</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell comp-metric">Urgency framing used</div>
+        <div class="comp-cell"><div class="comp-bar-wrap"><div class="mini-bar-row"><div class="mini-track"><div class="mini-fill win-fill" style="width:0%" data-w="53"></div></div><span class="comp-win-val">53%</span></div><div class="mini-bar-row"><div class="mini-track"><div class="mini-fill loss-fill" style="width:0%" data-w="37"></div></div><span class="comp-loss-val">37%</span></div></div></div>
+        <div class="comp-cell" style="font-size:13px; color:var(--muted)">Consultative urgency — not pressure tactics</div>
+        <div class="comp-cell"><span class="gap-chip gap-pos">+16%</span></div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell comp-metric">Ended passively ("let me know")</div>
+        <div class="comp-cell"><div class="comp-bar-wrap"><div class="mini-bar-row"><div class="mini-track"><div class="mini-fill win-fill" style="width:0%" data-w="9"></div></div><span class="comp-win-val">9%</span></div><div class="mini-bar-row"><div class="mini-track"><div class="mini-fill loss-fill" style="width:0%" data-w="38"></div></div><span class="comp-loss-val">38%</span></div></div></div>
+        <div class="comp-cell" style="font-size:13px; color:var(--muted)">Passive endings kill momentum and reduce urgency</div>
+        <div class="comp-cell"><span class="gap-chip gap-neg">−29%</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION F: TALK RATIO -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-badge">F</span>
+      <h2 class="section-title">Talk-to-Listen Ratio</h2>
+      <span class="section-desc">Who dominated the conversation</span>
+    </div>
+    <div class="talk-visual">
+      <div class="talk-row">
+        <div class="talk-header">
+          <div class="talk-title">🏆 Win Calls — Consultative</div>
+          <div class="talk-badge win-b">Parent speaks more</div>
+        </div>
+        <div class="talk-track">
+          <div class="talk-seg" style="width:0%; background:var(--win-mid)" data-w="58">Parent 58%</div>
+          <div class="talk-seg" style="width:0%; background:#B0D4C4; color:var(--win)" data-w="42">Rep 42%</div>
+        </div>
+      </div>
+      <div class="talk-row">
+        <div class="talk-header">
+          <div class="talk-title">❌ Loss Calls — Rep-Dominant</div>
+          <div class="talk-badge loss-b">Rep talks too much</div>
+        </div>
+        <div class="talk-track">
+          <div class="talk-seg" style="width:0%; background:#F0AABB; color:var(--loss)" data-w="43">Parent 43%</div>
+          <div class="talk-seg" style="width:0%; background:var(--loss-mid)" data-w="57">Rep 57%</div>
+        </div>
+      </div>
+      <div style="margin-top:20px; padding-top:20px; border-top:1px solid var(--border); display:flex; gap:24px; flex-wrap:wrap;">
+        <div style="font-size:13px; color:var(--muted)">💡 <strong style="color:var(--text)">Rep Interruptions:</strong> 14% in wins vs 37% in losses</div>
+        <div style="font-size:13px; color:var(--muted)">💡 <strong style="color:var(--text)">Talk imbalance</strong> raised loss probability by ~22%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONVERSION IMPACT MODEL -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-badge">G</span>
+      <h2 class="section-title">Projected Sales Impact Model</h2>
+      <span class="section-desc">If loss calls adopt win behaviors</span>
+    </div>
+    <div class="impact-section">
+      <div class="impact-eyebrow">Performance Delta Modeling</div>
+      <div class="impact-headline">Fix just 3 behaviors,<br>unlock <span>+18–25%</span> conversion lift</div>
+      <div class="impact-cols">
+        <div class="impact-col">
+          <div class="impact-area">01 · Discovery Upgrade</div>
+          <div class="impact-range">+9–12%</div>
+          <div class="impact-desc">Increase from 1.6 to 4 discovery questions per call — the single highest-leverage behavioral change.</div>
+          <div class="impact-from">Baseline: 1.6 → Target: 4.0 avg questions</div>
+        </div>
+        <div class="impact-col">
+          <div class="impact-area">02 · Objection Handling Fix</div>
+          <div class="impact-range">+14–18%</div>
+          <div class="impact-desc">Move objection resolution rate from 29% to 60% by exploring rather than accepting first resistance.</div>
+          <div class="impact-from">Baseline: 29% → Target: 60% resolution</div>
+        </div>
+        <div class="impact-col">
+          <div class="impact-area">03 · Structured Closing</div>
+          <div class="impact-range">+8–10%</div>
+          <div class="impact-desc">Ensure every call ends with a clear next step and a value summary — not a passive hand-off.</div>
+          <div class="impact-from">Baseline: 43% → Target: 80% next-step ask</div>
+        </div>
+      </div>
+      <div class="impact-total">
+        <div class="impact-total-label">Combined realistic improvement — no new leads, no pricing change, no product update. Pure behavioral optimization translating to 20–30% revenue uplift potential.</div>
+        <div class="impact-total-num"><span>+</span>18–25%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIENT MESSAGE -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-badge">H</span>
+      <h2 class="section-title">The Core Difference — Client View</h2>
+      <span class="section-desc">The gap is not demand. It's conversation control.</span>
+    </div>
+    <div class="message-grid">
+      <div class="message-card win-mc">
+        <div class="mc-head">✅ Win Calls Are...</div>
+        <div class="mc-item"><span class="mc-check">✔</span> Structured and intentional throughout</div>
+        <div class="mc-item"><span class="mc-check">✔</span> Consultative — parent-led, rep-guided</div>
+        <div class="mc-item"><span class="mc-check">✔</span> Discovery-led before any pitch</div>
+        <div class="mc-item"><span class="mc-check">✔</span> Objection-controlled — explore, don't accept</div>
+        <div class="mc-item"><span class="mc-check">✔</span> Close-oriented — always ask for next step</div>
+        <div class="mc-item"><span class="mc-check">✔</span> Personalized — link value to their exact words</div>
+      </div>
+      <div class="message-card loss-mc">
+        <div class="mc-head">❌ Loss Calls Are...</div>
+        <div class="mc-item"><span class="mc-check">✗</span> Rushed — price enters before value is built</div>
+        <div class="mc-item"><span class="mc-check">✗</span> Script-heavy — rep-dominant and detached</div>
+        <div class="mc-item"><span class="mc-check">✗</span> Surface-level — no real discovery depth</div>
+        <div class="mc-item"><span class="mc-check">✗</span> Objection-accepting — first "No" ends the effort</div>
+        <div class="mc-item"><span class="mc-check">✗</span> Passive at close — "think about it and let me know"</div>
+        <div class="mc-item"><span class="mc-check">✗</span> Generic — no linkage to parent's actual concern</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINAL STATEMENT -->
+  <div class="final-statement">
+    <div class="fs-label">Final Impact Statement</div>
+    <div class="fs-title">Standardize win-call behavior<br>across the team — and conversion follows.</div>
+    <div class="fs-sub">The gap between wins and losses is behavioral, not structural. No new spend, no new product, no new leads required. Just replicable conversation discipline.</div>
+    <div class="fs-chips">
+      <div class="fs-chip win-chip">+62% Discovery Depth</div>
+      <div class="fs-chip">+45% Objection Resolution</div>
+      <div class="fs-chip">+45% Closing Control</div>
+      <div class="fs-chip">−15% Rep Talk Dominance</div>
+      <div class="fs-chip">+18–25% Conversion Lift</div>
+    </div>
+  </div>
+
+  <footer>
+    <div>Consolidated Win vs. Loss Analysis · 636 Calls · 53 Wins · 583 Losses</div>
+    <div>Behavioral pattern extraction · Performance delta modeling</div>
+  </footer>
+
+</div>
+
+<script>
+// Animate bars on load
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelectorAll('.mini-fill').forEach(el => {
+      el.style.width = el.dataset.w + '%';
+    });
+    document.querySelectorAll('.talk-seg').forEach(el => {
+      el.style.width = el.dataset.w + '%';
+    });
+  }, 400);
+});
+
+// Chart defaults
+Chart.defaults.font.family = "'Public Sans', sans-serif";
+Chart.defaults.color = '#7A869A';
+
+const gridColor = 'rgba(0,0,0,0.05)';
+
+// Discovery bar chart
+new Chart(document.getElementById('discoveryChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Avg Questions\nPer Call', 'Expectation\nQuestion', 'Performance\nGap Q', 'Multi-layer\n(3+ Qs)'],
+    datasets: [
+      {
+        label: 'Win Calls',
+        data: [84, 83, 68, 72],
+        backgroundColor: 'rgba(26,173,106,0.85)',
+        borderRadius: 6,
+        borderSkipped: false,
+      },
+      {
+        label: 'Loss Calls',
+        data: [32, 51, 39, 28],
+        backgroundColor: 'rgba(224,64,96,0.7)',
+        borderRadius: 6,
+        borderSkipped: false,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: { usePointStyle: true, pointStyle: 'circle', padding: 16, font: { size: 12 } }
+      }
+    },
+    scales: {
+      x: { grid: { color: gridColor }, border: { color: 'transparent' } },
+      y: {
+        grid: { color: gridColor },
+        border: { color: 'transparent' },
+        max: 100,
+        ticks: { callback: v => v + '%' }
+      }
+    }
+  }
+});
+
+// Discovery radar
+new Chart(document.getElementById('discoveryRadar'), {
+  type: 'radar',
+  data: {
+    labels: ['Grade Alignment', 'Performance Gap', 'Expectation Q', 'Long-term Goal', '3+ Questions'],
+    datasets: [
+      {
+        label: 'Winners',
+        data: [76, 68, 83, 59, 72],
+        fill: true,
+        backgroundColor: 'rgba(26,173,106,0.12)',
+        borderColor: 'rgba(26,173,106,0.9)',
+        pointBackgroundColor: '#1AAD6A',
+        borderWidth: 2.5,
+        pointRadius: 4
+      },
+      {
+        label: 'Losers',
+        data: [42, 39, 51, 22, 28],
+        fill: true,
+        backgroundColor: 'rgba(224,64,96,0.08)',
+        borderColor: 'rgba(224,64,96,0.7)',
+        pointBackgroundColor: '#E04060',
+        borderWidth: 2,
+        pointRadius: 3
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { labels: { usePointStyle: true, pointStyle: 'circle', padding: 14, font: { size: 12 } } }
+    },
+    scales: {
+      r: {
+        grid: { color: 'rgba(0,0,0,0.07)' },
+        angleLines: { color: 'rgba(0,0,0,0.06)' },
+        pointLabels: { color: '#3A4560', font: { size: 11, weight: '600' } },
+        ticks: { display: false },
+        max: 100
+      }
+    }
+  }
+});
+
+// Objection resolution grouped bar
+new Chart(document.getElementById('objectionChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Price\nResolved', 'Probed\nbefore No', 'Reframed\nas Invest.', 'Left\nUnresolved'],
+    datasets: [
+      {
+        label: 'Win Calls',
+        data: [74, 69, 63, 11],
+        backgroundColor: 'rgba(26,173,106,0.85)',
+        borderRadius: 6,
+        borderSkipped: false,
+      },
+      {
+        label: 'Loss Calls',
+        data: [29, 34, 22, 48],
+        backgroundColor: 'rgba(224,64,96,0.7)',
+        borderRadius: 6,
+        borderSkipped: false,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { labels: { usePointStyle: true, pointStyle: 'circle', padding: 16, font: { size: 12 } } }
+    },
+    scales: {
+      x: { grid: { color: gridColor }, border: { color: 'transparent' } },
+      y: {
+        grid: { color: gridColor },
+        border: { color: 'transparent' },
+        max: 100,
+        ticks: { callback: v => v + '%' }
+      }
+    }
+  }
+});
+
+// Objection breakdown doughnut
+new Chart(document.getElementById('objectionBreakdown'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Price unresolved', 'Accepted 1st No', 'Defensive tone', 'No urgency framing', 'Spouse left open'],
+    datasets: [{
+      data: [48, 36, 21, 63, 44],
+      backgroundColor: [
+        'rgba(192,41,63,0.85)',
+        'rgba(224,64,96,0.75)',
+        'rgba(255,107,53,0.75)',
+        'rgba(176,123,0,0.75)',
+        'rgba(100,120,160,0.65)',
+      ],
+      borderWidth: 0,
+      hoverOffset: 8
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: '58%',
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: {
+          usePointStyle: true,
+          pointStyle: 'circle',
+          padding: 12,
+          font: { size: 11 },
+          boxWidth: 10
+        }
+      },
+      tooltip: {
+        callbacks: {
+          label: ctx => `${ctx.label}: ${ctx.parsed}% of loss calls`
+        }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
