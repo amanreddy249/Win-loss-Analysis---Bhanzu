@@ -1,95 +1,79 @@
-## 📊 Sales Call Analysis
+##  Sales Call Analysis
 [View Interactive Analysis →](https://amanreddy249.github.io/Win-loss-Analysis---Bhanzu/consolidated_win_loss_analysis.html)
-# 📊 Sales Call Win vs. Loss — Behavioral Intelligence Report
+# Sales Call Analysis — Win vs. Loss
+**636 calls. 53 wins. 583 losses. Here is what actually separated them.**
 
-> **Consolidated analysis of 636 sales calls · Client-Ready · Impact-Focused · Quantified**  
-> *Prepared by Aman Reddy · Data Analyst*
+Prepared by Aman Reddy · Data Analyst
 
 ---
 
-## 🔗 Live Interactive Dashboards
+## Live Dashboards
 
-| Version | Link | Theme |
+[Light Version](https://amanreddy249.github.io/Win-loss-Analysis---Bhanzu/consolidated_win_loss_analysis.html) &nbsp;|&nbsp; [Dark Version](https://amanreddy249.github.io/Win-loss-Analysis---Bhanzu/sales_call_analysis.html)
+
+---
+
+## Overview
+
+This is a behavioral analysis of 636 sales calls from the Bhanzu dataset. The goal was straightforward — identify what winning reps consistently did that losing reps did not, quantify those gaps, and model the revenue impact of closing them.
+
+The findings are not about product, pricing, or lead quality. Every measurable gap comes down to conversation behavior.
+
+---
+
+## What the Data Shows
+
+| Metric | Win Calls | Loss Calls | Gap |
+|---|---|---|---|
+| Avg. discovery questions per call | 4.2 | 1.6 | +62% |
+| Objection fully resolved | 74% | 29% | +45% |
+| Clear next-step ask made | 88% | 43% | +45% |
+| Value linked to parent's words | 78% | 48% | +30% |
+| Parent talk share | 58% | 43% | +15% |
+| Pricing mentioned in first 3 mins | 6% | 39% | -33% |
+
+---
+
+## Core Finding
+
+Winners did not have better scripts. They asked more questions, listened longer before pitching, explored objections instead of accepting them, and always closed with a specific next step.
+
+Losses followed a predictable pattern — price came up too early, discovery was shallow, the first objection ended the effort, and calls closed passively.
+
+The structural gap is measurable and correctable.
+
+---
+
+## Projected Impact
+
+Fixing three behaviors in loss calls — discovery depth, objection resolution, and closing discipline — projects a conversion lift of **18% to 25%** without changing product, pricing, or lead volume.
+
+| Area | Change Required | Projected Lift |
 |---|---|---|
-| 📗 Light Theme | [View Analysis →](https://amanreddy249.github.io/Win-loss-Analysis---Bhanzu/consolidated_win_loss_analysis.html) | Clean & Professional |
-| 📘 Dark Theme | [View Analysis →](https://amanreddy249.github.io/Win-loss-Analysis---Bhanzu/sales_call_analysis.html) | Executive Dashboard |
+| Discovery depth | 1.6 to 4.0 avg questions | +9 to 12% |
+| Objection resolution | 29% to 60% resolution rate | +14 to 18% |
+| Structured closing | 43% to 80% next-step ask | +8 to 10% |
+| Combined | | +18 to 25% |
 
 ---
 
-## 📌 What This Analysis Covers
+## Analysis Structure
 
-This report analyzes **636 real sales calls** — 53 wins and 583 losses — to extract the exact behavioral, structural, and conversational patterns that determine whether a call converts or collapses.
-
-The analysis is divided into **8 sections**:
-
-| Section | Focus Area |
-|---|---|
-| **A — Opening & Rapport** | How the first 3 minutes shaped the outcome |
-| **B — Discovery Depth** | The #1 predictor of conversion |
-| **C — Value Proposition** | How value was framed and personalized |
-| **D — Objection Handling** | Where 63% of losses collapsed |
-| **E — Closing & Next Step** | Who asked and who didn't |
-| **F — Talk-to-Listen Ratio** | Consultative vs. rep-dominant calls |
-| **G — Conversion Impact Model** | Projected revenue lift from behavioral fixes |
-| **H — Client Message** | Plain-language summary for stakeholders |
+The interactive dashboards cover six behavioral dimensions — opening and rapport, discovery depth, value proposition delivery, objection handling, closing control, and talk-to-listen ratio — followed by a conversion impact model and a plain-language client summary.
 
 ---
 
-## 🔑 Key Findings at a Glance
-
-```
-📌 Discovery Depth Gap      →   Winners asked 4.2 questions vs. 1.6 in losses  (+62%)
-📌 Objection Resolution     →   74% resolved in wins vs. 29% in losses          (+45%)
-📌 Closing Control          →   88% asked next step in wins vs. 43% in losses   (+45%)
-📌 Talk Ratio               →   Parent spoke 58% in wins vs. 43% in losses      (+15%)
-📌 Early Pricing (Bad)      →   6% in wins vs. 39% in losses                    (−33%)
-📌 Revenue Uplift Potential →   +18% to +25% conversion lift identified
-```
-
----
-
-## 💡 The Core Insight
-
-> *"The gap between Wins and Losses is not product quality, pricing, or leads.*  
-> *It is conversation control."*
-
-| Wins Are... | Losses Are... |
-|---|---|
-| ✅ Structured & intentional | ❌ Rushed & unplanned |
-| ✅ Discovery-led | ❌ Pitch-first |
-| ✅ Consultative — parent speaks more | ❌ Rep-dominant |
-| ✅ Objection-controlled | ❌ Objection-accepting |
-| ✅ Close-oriented — always ask | ❌ Passive — "think about it" |
-| ✅ Personalized to parent's words | ❌ Generic & scripted |
-
----
-
-## 📈 Projected Conversion Impact
-
-If loss calls adopt just **3 win behaviors**:
-
-| Improvement Area | Target | Expected Lift |
-|---|---|---|
-| Discovery Upgrade | 1.6 → 4.0 avg questions | **+9–12%** |
-| Objection Handling Fix | 29% → 60% resolution | **+14–18%** |
-| Structured Closing | 43% → 80% next-step ask | **+8–10%** |
-| **Combined Total** | | **🚀 +18–25%** |
-
-> Without changing product, pricing, or marketing spend.
-
----
-
-## 📂 Files in This Repository
+## Files
 
 | File | Description |
 |---|---|
-| `consolidated_win_loss_analysis.html` | Full interactive dashboard — Light theme |
-| `sales_call_analysis.html` | Full interactive dashboard — Dark theme |
+| `consolidated_win_loss_analysis.html` | Interactive dashboard, light theme |
+| `sales_call_analysis.html` | Interactive dashboard, dark theme |
 | `README.md` | This document |
 
 ---
 
-## 🛠️ Built With
+## Built With
 
 ![HTML](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
 ![CSS](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)
@@ -99,16 +83,4 @@ If loss calls adopt just **3 win behaviors**:
 
 ---
 
-## 👤 Author
-
-**Aman Reddy** · Data Analyst
-
-[![GitHub](https://img.shields.io/badge/GitHub-amanreddy249-181717?style=flat-square&logo=github)](https://github.com/amanreddy249)
-
----
-
-<div align="center">
-
-*Sales Intelligence · Behavioral Pattern Analysis · Conversion Optimization*
-
-</div>
+**Aman Reddy** · [github.com/amanreddy249](https://github.com/amanreddy249)
